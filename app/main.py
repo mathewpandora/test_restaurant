@@ -1,12 +1,11 @@
-from fastapi import FastAPI, Depends
+from fastapi import FastAPI
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker, Session
+from sqlalchemy.orm import sessionmaker
 from dotenv import load_dotenv
-from app.db.models import Table, Reservation
 from pydantic import BaseModel
 from datetime import datetime
-from typing import List, Optional
+from app.api import tables, reservation
 import os
 
 # Загрузка переменных окружения
@@ -20,26 +19,11 @@ SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
 Base.metadata.create_all(bind=engine)
 
-# Dependency для получения сессии БД
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
-
 
 app = FastAPI()
 
-# Модели Pydantic для ответов API
-class TableResponse(BaseModel):
-    id: int
-    name: str
-    seats: int
-    location: Optional[str]
-
-    class Config:
-        orm_mode = True
+app.include_router(tables.router, prefix="/tables", tags=["tables"])
+app.include_router(reservation.router, prefix="/reservation", tags=["reservation"])
 
 class ReservationResponse(BaseModel):
     id: int
@@ -53,12 +37,10 @@ class ReservationResponse(BaseModel):
 
 @app.get("/")
 def read_root():
-    return {"message": "Hello World"}
+    return {"message": "Благодарю, что уделили время на проверку тестовго! Очень прошу вас дать мне обратную связь по коду, даже если ваше решение негативное",
+            "contact":{"tg":"@waterspelling", "whatsapp":"89153029475"},
+            "resume":"https://mathewresume.online"}
 
-@app.get("/tables/", response_model=List[TableResponse])
-def get_tables(db: Session = Depends(get_db)):
-    return db.query(Table).all()
 
-@app.get("/reservations/", response_model=List[ReservationResponse])
-def get_reservations(db: Session = Depends(get_db)):
-    return db.query(Reservation).all()
+
+

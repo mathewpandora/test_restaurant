@@ -32,19 +32,19 @@ def init_db():
             now = datetime.now()
             reservations = [
                 Reservation(
-                    customer_name="John Doe",
+                    customer_name="Dima",
                     table_id=1,
                     reservation_time=now + timedelta(hours=1),
                     duration_minutes=90
                 ),
                 Reservation(
-                    customer_name="Jane Smith",
+                    customer_name="Marty",
                     table_id=2,
                     reservation_time=now + timedelta(hours=3),
                     duration_minutes=120
                 ),
                 Reservation(
-                    customer_name="Bob Johnson",
+                    customer_name="Bob",
                     table_id=3,
                     reservation_time=now + timedelta(days=1),
                     duration_minutes=60
